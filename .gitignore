@@ -9,3 +9,4 @@ dist
 *.zip
 temp
 update.sh
+.vscode/settings.json
