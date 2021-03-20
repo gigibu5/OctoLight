@@ -12,5 +12,25 @@
 				{{ _('Inverted output') }}
 			</label>
 		</div>
+		<div class="controls">
+			<label class="checkbox">
+				<input type="checkbox" data-bind="checked: settings.plugins.octolight.is_button_enabled">
+				{{ _('Enable physical button') }}
+			</label>
+		</div>
+		<label class="control-label">{{ _('Button PIN') }}</label>
+		<div class="controls">
+			<input type="number" min="1" max="40" class="input-small" data-bind="value: settings.plugins.octolight.button_pin">
+		</div>
+		<div class="controls">
+			<label class="checkbox">
+				<input type="checkbox" data-bind="checked: settings.plugins.octolight.is_led_strip">
+				{{ _('Led strip') }}
+			</label>
+		</div>
+		<label class="control-label">{{ _('Number of leds') }}</label>
+		<div class="controls">
+			<input type="number" min="1" class="input-small" data-bind="value: settings.plugins.octolight.nb_leds">
+		</div>
 	</div>
 </form>
