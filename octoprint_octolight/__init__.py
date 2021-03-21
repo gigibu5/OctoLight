@@ -85,7 +85,7 @@ class OctoLightPlugin(
         # Setting the default state of the light pin
         self.setup_pin()
         if not bool(self._settings.get([IS_LED_STRIP])):
-            if bool(self._settings.get([INVERTED_OUTPUT]))):
+            if bool(self._settings.get([INVERTED_OUTPUT])):
                 GPIO.output(int(self._settings.get([LIGHT_PIN])), GPIO.HIGH)
             else:
                 GPIO.output(int(self._settings.get([LIGHT_PIN])), GPIO.LOW)
