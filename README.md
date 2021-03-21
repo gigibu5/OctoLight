@@ -12,7 +12,7 @@ or manually using this URL:
 ## Configuration
 ![Settings panel](img/settings.png)
 
-Currently, you can configure two settings:
+Currently, you can configure theses settings:
 - `Light PIN`: The pin on the Raspberry Pi that the button controls. 
 	- Default value: 19
 	- The pin number is saved in the **BCM layout naming** scheme (orange labels on the pinout image below).
