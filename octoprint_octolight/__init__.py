@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
 
+
 import octoprint.plugin
 from octoprint.events import Events
 import flask
@@ -81,6 +82,13 @@ class OctoLightPlugin(
         ))
         self._logger.info("--------------------------------------------")
 
+        # Setting the default state of the light pin
+        self.setup_pin()
+        if not bool(self._settings.get([IS_LED_STRIP])):
+            if bool(self._settings.get([INVERTED_OUTPUT]))):
+                GPIO.output(int(self._settings.get([LIGHT_PIN])), GPIO.HIGH)
+            else:
+                GPIO.output(int(self._settings.get([LIGHT_PIN])), GPIO.LOW)
 
 		self._plugin_manager.send_plugin_message(self._identifier, dict(isLightOn=self.light_state))
 
@@ -101,16 +109,7 @@ class OctoLightPlugin(
             self._settings.set([PREVIOUS_BUTTON_PIN],
                                self._settings.get([BUTTON_PIN]))
 
-        if bool(self._settings.get([IS_LED_STRIP])):
-
-            # enabling led strip on selected pin
-            self.pixels = PixelStrip(int(self._settings.get([NB_LEDS])), int(self._settings.get(
-                [LIGHT_PIN])), LED_FREQ_HZ, LED_DMA, bool(self._settings.get([INVERTED_OUTPUT])), LED_BRIGHTNESS, LED_CHANNEL, LED_STRIP)
-            self.pixels.begin()
-        else:
-
-            # Sets the GPIO every time, if user changed it in the settings.
-            GPIO.setup(int(self._settings.get([LIGHT_PIN])), GPIO.OUT)
+        self.setup_pin()
 
         self.change_light_state(None)
 
@@ -143,9 +142,9 @@ class OctoLightPlugin(
                     "Led strip mode is enabled, will turn on the led strip")
                 self.colorWipe(self.pixels, Color(255, 255, 255))
             else:
-                self._logger.info(
+                self._logger.debug(
                     "Led strip mode is enabled, will turn off the led strip")
-                self.colorWipe(self.pixels, Color(0,0,0))
+                self.colorWipe(self.pixels, Color(0, 0, 0))
         elif self.light_state ^ self._settings.get([INVERTED_OUTPUT]):
             GPIO.output(int(self._settings.get([LIGHT_PIN])), GPIO.HIGH)
         else:
@@ -154,7 +153,6 @@ class OctoLightPlugin(
         self._logger.debug("Light state switched to : {}".format(
             self.light_state
         ))
-
 
     def get_update_information(self):
         return dict(
@@ -170,7 +168,7 @@ class OctoLightPlugin(
                 pip="https://github.com/emouty/OctoLight/archive/{target}.zip"
             )
         )
-           
+
     def on_shutdown(self):
         # release GPIO pin on shutdown
         GPIO.cleanup()
@@ -181,6 +179,17 @@ class OctoLightPlugin(
         for i in range(strip.numPixels()):
             strip.setPixelColor(i, color)
             strip.show()
+
+    def setup_pin(self):
+        if bool(self._settings.get([IS_LED_STRIP])):
+
+            # enabling led strip on selected pin
+            self.pixels = PixelStrip(int(self._settings.get([NB_LEDS])), int(self._settings.get(
+                [LIGHT_PIN])), LED_FREQ_HZ, LED_DMA, bool(self._settings.get([INVERTED_OUTPUT])), LED_BRIGHTNESS, LED_CHANNEL, LED_STRIP)
+            self.pixels.begin()
+        else:
+            # Sets the GPIO every time, if user changed it in the settings.
+            GPIO.setup(int(self._settings.get([LIGHT_PIN])), GPIO.OUT)
 
 __plugin_pythoncompat__ = ">=2.7,<4"
 __plugin_implementation__ = OctoLightPlugin()
