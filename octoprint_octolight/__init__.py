@@ -9,8 +9,8 @@ import board
 from rpi_ws281x import Color, PixelStrip, ws
 import RPi.GPIO as GPIO
 
-# GPIO.cleanup()
-# GPIO.setmode(GPIO.BOARD)
+
+GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
 # constants
