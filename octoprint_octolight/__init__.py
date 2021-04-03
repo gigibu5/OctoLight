@@ -35,8 +35,8 @@ class OctoLightPlugin(
 		octoprint.plugin.SimpleApiPlugin,
 		octoprint.plugin.SettingsPlugin,
 		octoprint.plugin.EventHandlerPlugin,
-		octoprint.plugin.RestartNeedingPlugin
-    octoprint.plugin.ShutdownPlugin
+		octoprint.plugin.RestartNeedingPlugin,
+        octoprint.plugin.ShutdownPlugin
 	):
 
     # variables
