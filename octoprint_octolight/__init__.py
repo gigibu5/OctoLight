@@ -31,12 +31,12 @@ LED_FREQ_HZ = 800000  # LED signal frequency in hertz (usually 800khz)
 class OctoLightPlugin(
 		octoprint.plugin.AssetPlugin,
 		octoprint.plugin.StartupPlugin,
+		octoprint.plugin.ShutdownPlugin,
 		octoprint.plugin.TemplatePlugin,
 		octoprint.plugin.SimpleApiPlugin,
 		octoprint.plugin.SettingsPlugin,
 		octoprint.plugin.EventHandlerPlugin,
-		octoprint.plugin.RestartNeedingPlugin,
-		octoprint.plugin.ShutdownPlugin
+		octoprint.plugin.RestartNeedingPlugin
 	):
 
 	# variables
@@ -113,13 +113,10 @@ class OctoLightPlugin(
 
 		self.change_light_state(None)
 
-		self._plugin_manager.send_plugin_message(self._identifier, dict(isLightOn=self.light_state))
-
-
 		return flask.jsonify(status="ok")
 
 	def on_event(self, event, payload):
-			self._plugin_manager.send_plugin_message(self._identifier, dict(isLightOn=self.light_state))
+		self._plugin_manager.send_plugin_message(self._identifier, dict(isLightOn=self.light_state))
 		if event == Events.CLIENT_OPENED:
 			return
 
@@ -153,6 +150,9 @@ class OctoLightPlugin(
 		self._logger.debug("Light state switched to : {}".format(
 			self.light_state
 		))
+		# message the ui to change the button color
+		self._plugin_manager.send_plugin_message(self._identifier, dict(isLightOn=self.light_state))
+
 
 	def get_update_information(self):
 		return dict(
