@@ -7,3 +7,6 @@ dist
 *.egg*
 .DS_Store
 *.zip
+temp
+update.sh
+.vscode/settings.json
