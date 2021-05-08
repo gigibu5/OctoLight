@@ -76,26 +76,31 @@ class OctoLightPlugin(
 		self._plugin_manager.send_plugin_message(self._identifier, dict(isLightOn=self.light_state))
 
 	def on_api_get(self, request):
-		# Sets the GPIO every time, if user changed it in the settings.
-		GPIO.setup(int(self._settings.get(["light_pin"])), GPIO.OUT)
+		action = request.args.get('action', default="toggle", type=str)
 
+		if action == "toggle":
+			# Sets the GPIO every time, if user changed it in the settings.
+			GPIO.setup(int(self._settings.get(["light_pin"])), GPIO.OUT)
 
-		self.light_state = not self.light_state
+			self.light_state = not self.light_state
 
-		# Sets the light state depending on the inverted output setting (XOR)
-		if self.light_state ^ self._settings.get(["inverted_output"]):
-			GPIO.output(int(self._settings.get(["light_pin"])), GPIO.HIGH)
+			# Sets the light state depending on the inverted output setting (XOR)
+			if self.light_state ^ self._settings.get(["inverted_output"]):
+				GPIO.output(int(self._settings.get(["light_pin"])), GPIO.HIGH)
+			else:
+				GPIO.output(int(self._settings.get(["light_pin"])), GPIO.LOW)
+
+			self._logger.info("Got request. Light state: {}".format(
+				self.light_state
+			))
+
+			self._plugin_manager.send_plugin_message(self._identifier, dict(isLightOn=self.light_state))
+
+			return flask.jsonify(state=self.light_state)
+		elif action == "getState":
+			return flask.jsonify(state=self.light_state)
 		else:
-			GPIO.output(int(self._settings.get(["light_pin"])), GPIO.LOW)
-
-		self._logger.info("Got request. Light state: {}".format(
-			self.light_state
-		))
-
-		self._plugin_manager.send_plugin_message(self._identifier, dict(isLightOn=self.light_state))
-
-
-		return flask.jsonify(status="ok")
+			return flask.jsonify(error="action not recognized")
 
 	def on_event(self, event, payload):
 		if event == Events.CLIENT_OPENED:
