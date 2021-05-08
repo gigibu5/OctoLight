@@ -26,7 +26,7 @@ Curently, you can configure two settings:
 Base API URL : `GET http://YOUR_OCTOPRINT_SERVER/api/plugin/octolight?action=ACTION_NAME`
 
 _(if the action parameter not given, the action toggle will be used by default)_
-#### Action
+#### Actions
 - **toggle** (default action): Toggle light switch on/off. JSON return example: `{state: true}`
 - **getState**: Get current light switch state. JSON return example: `{state: true}`
 
