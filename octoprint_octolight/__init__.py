@@ -75,10 +75,9 @@ class OctoLightPlugin(
 
 		self._plugin_manager.send_plugin_message(self._identifier, dict(isLightOn=self.light_state))
 
-	def on_api_get(self, request):
+	def light_toggle(self):
 		# Sets the GPIO every time, if user changed it in the settings.
 		GPIO.setup(int(self._settings.get(["light_pin"])), GPIO.OUT)
-
 
 		self.light_state = not self.light_state
 
@@ -94,8 +93,31 @@ class OctoLightPlugin(
 
 		self._plugin_manager.send_plugin_message(self._identifier, dict(isLightOn=self.light_state))
 
+	def on_api_get(self, request):
+		action = request.args.get('action', default="toggle", type=str)
 
-		return flask.jsonify(status="ok")
+		if action == "toggle":
+			self.light_toggle()
+
+			return flask.jsonify(state=self.light_state)
+
+		elif action == "getState":
+			return flask.jsonify(state=self.light_state)
+
+		elif action == "turnOn":
+			if not self.light_state:
+				self.light_toggle()
+
+			return flask.jsonify(state=self.light_state)
+
+		elif action == "turnOff":
+			if self.light_state:
+				self.light_toggle()
+
+			return flask.jsonify(state=self.light_state)
+
+		else:
+			return flask.jsonify(error="action not recognized")
 
 	def on_event(self, event, payload):
 		if event == Events.CLIENT_OPENED:
