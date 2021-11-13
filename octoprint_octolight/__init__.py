@@ -7,6 +7,8 @@ import flask
 
 import RPi.GPIO as GPIO
 
+import requests
+
 GPIO.setmode(GPIO.BOARD)
 GPIO.setwarnings(False)
 
@@ -51,14 +53,19 @@ class OctoLightPlugin(
 			self._settings.get(["light_pin"]),
 			self._settings.get(["inverted_output"])
 		))
+		self._logger.info("Shelly IP address: {}, use shelly instead of GPIO: {}".format(
+			self._settings.get(["shelly_ip"]),
+			self._settings.get(["use_shelly"])	
+		))
 		self._logger.info("--------------------------------------------")
-
-		# Setting the default state of pin
-		GPIO.setup(int(self._settings.get(["light_pin"])), GPIO.OUT)
-		if bool(self._settings.get(["inverted_output"])):
-			GPIO.output(int(self._settings.get(["light_pin"])), GPIO.HIGH)
-		else:
-			GPIO.output(int(self._settings.get(["light_pin"])), GPIO.LOW)
+		
+		if not self._settings.get(["use_shelly"]):
+			# Setting the default state of pin
+			GPIO.setup(int(self._settings.get(["light_pin"])), GPIO.OUT)
+			if bool(self._settings.get(["inverted_output"])):
+				GPIO.output(int(self._settings.get(["light_pin"])), GPIO.HIGH)
+			else:
+				GPIO.output(int(self._settings.get(["light_pin"])), GPIO.LOW)
 
 		#Because light is set to ff on startup we don't need to retrieve the current state
 		"""
@@ -77,15 +84,22 @@ class OctoLightPlugin(
 
 	def light_toggle(self):
 		# Sets the GPIO every time, if user changed it in the settings.
-		GPIO.setup(int(self._settings.get(["light_pin"])), GPIO.OUT)
+		if not self._settings.get(["use_shelly"]):	
+			GPIO.setup(int(self._settings.get(["light_pin"])), GPIO.OUT)
 
 		self.light_state = not self.light_state
 
 		# Sets the light state depending on the inverted output setting (XOR)
 		if self.light_state ^ self._settings.get(["inverted_output"]):
-			GPIO.output(int(self._settings.get(["light_pin"])), GPIO.HIGH)
+			if not self._settings.get(["use_shelly"]):
+				GPIO.output(int(self._settings.get(["light_pin"])), GPIO.HIGH)
+			else:
+				r = requests.get('http://' + self._settings.get(["shelly_ip"]) + '/relay/0?turn=on')
 		else:
-			GPIO.output(int(self._settings.get(["light_pin"])), GPIO.LOW)
+			if not self._settings.get(["use_shelly"]):
+				GPIO.output(int(self._settings.get(["light_pin"])), GPIO.LOW)
+			else:
+				r = requests.get('http://' + self._settings.get(["shelly_ip"]) + '/relay/0?turn=off')
 
 		self._logger.info("Got request. Light state: {}".format(
 			self.light_state
