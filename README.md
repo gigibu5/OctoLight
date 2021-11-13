@@ -1,5 +1,5 @@
 # OctoLight
-A simple plugin that adds a button to the navigation bar for toggleing a GPIO pin on the Raspberry Pi.
+A simple plugin that adds a button to the navigation bar for toggleing a GPIO pin on the Raspberry Pi or send a HTML GET request to shelly wi-fi switch
 
 ![WebUI interface](img/screenshoot.png)
 
@@ -21,6 +21,9 @@ Curently, you can configure two settings:
 
 - `Inverted output`: If true, the output will be inverted
 	- Usage: if you have a light, that is turned off when voltage is applied to the pin (wired in negative logic), you should turn on this option, so the light isn't on when you reboot your Raspberry Pi.
+
+- `Use Shelly Wi-fi switch to turn on/off lights instead of GPIO`
+- `Shelly IP address`: type in local ip address like 192.168.178.71
 
 ## API
 Base API URL : `GET http://YOUR_OCTOPRINT_SERVER/api/plugin/octolight?action=ACTION_NAME`
