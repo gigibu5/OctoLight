@@ -7,8 +7,6 @@ import flask
 
 import RPi.GPIO as GPIO
 
-GPIO.setmode(GPIO.BOARD)
-GPIO.setwarnings(False)
 
 class OctoLightPlugin(
 		octoprint.plugin.AssetPlugin,
@@ -21,6 +19,19 @@ class OctoLightPlugin(
 	):
 
 	light_state = False
+	gpio_board_mode = True
+
+	def get_light_pin(self):
+		board_pin = int(self._settings.get(["light_pin"]))
+		if self.gpio_board_mode:
+			return board_pin
+		bcm_map = [-1, -1, 2, -1, 3, -1, 4, -1, -1, -1,
+			   17, 18, 27, -1, 22, 23, -1, 24, 10, -1,
+			   9, 25, 11, 8, -1, 7, -1, -1, 5, -1,
+			   6, 12, 13, -1, 19, 16, 26, 20, -1, 21]
+		if 1 <= board_pin <= 40:
+			return bcm_map[board_pin - 1]
+		return -1
 
 	def get_settings_defaults(self):
 		return dict(
@@ -44,6 +55,16 @@ class OctoLightPlugin(
 		)
 
 	def on_after_startup(self):
+		# Set GPIO to board numbering, if possible
+		current_mode = GPIO.getmode()
+		if current_mode is None:
+			GPIO.setmode(GPIO.BOARD)
+			self.gpio_board_mode = True
+		elif current_mode != GPIO.BOARD:
+			GPIO.setmode(current_mode)
+			self.gpio_board_mode = False
+		GPIO.setwarnings(False)
+
 		self.light_state = False
 		self._logger.info("--------------------------------------------")
 		self._logger.info("OctoLight started, listening for GET request")
@@ -54,15 +75,16 @@ class OctoLightPlugin(
 		self._logger.info("--------------------------------------------")
 
 		# Setting the default state of pin
-		GPIO.setup(int(self._settings.get(["light_pin"])), GPIO.OUT)
+		pin = self.get_light_pin()
+		GPIO.setup(pin, GPIO.OUT)
 		if bool(self._settings.get(["inverted_output"])):
-			GPIO.output(int(self._settings.get(["light_pin"])), GPIO.HIGH)
+			GPIO.output(pin, GPIO.HIGH)
 		else:
-			GPIO.output(int(self._settings.get(["light_pin"])), GPIO.LOW)
+			GPIO.output(pin, GPIO.LOW)
 
 		#Because light is set to ff on startup we don't need to retrieve the current state
 		"""
-		r = self.light_state = GPIO.input(int(self._settings.get(["light_pin"])))
+		r = self.light_state = GPIO.input(pin)
         if r==1:
                 self.light_state = False
         else:
@@ -77,17 +99,19 @@ class OctoLightPlugin(
 
 	def light_toggle(self):
 		# Sets the GPIO every time, if user changed it in the settings.
-		GPIO.setup(int(self._settings.get(["light_pin"])), GPIO.OUT)
+		pin = self.get_light_pin()
+		GPIO.setup(pin, GPIO.OUT)
 
 		self.light_state = not self.light_state
 
 		# Sets the light state depending on the inverted output setting (XOR)
 		if self.light_state ^ self._settings.get(["inverted_output"]):
-			GPIO.output(int(self._settings.get(["light_pin"])), GPIO.HIGH)
+			GPIO.output(pin, GPIO.HIGH)
 		else:
-			GPIO.output(int(self._settings.get(["light_pin"])), GPIO.LOW)
+			GPIO.output(pin, GPIO.LOW)
 
-		self._logger.info("Got request. Light state: {}".format(
+		self._logger.info("Got request. Light state on channel {}: {}".format(
+			pin,
 			self.light_state
 		))
 
