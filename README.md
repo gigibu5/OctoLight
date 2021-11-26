@@ -1,5 +1,5 @@
 # OctoLight
-A simple plugin that adds a button to the navigation bar for toggleing a GPIO pin on the Raspberry Pi.
+A simple plugin that adds a button to the navigation bar for toggling a GPIO pin on the Raspberry Pi.
 
 ![WebUI interface](img/screenshoot.png)
 
