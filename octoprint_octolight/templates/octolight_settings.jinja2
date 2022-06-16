@@ -12,5 +12,10 @@
 				{{ _('Inverted output') }}
 			</label>
 		</div>
+
+		<label class="control-label">{{ _('Delay Light Off') }}</label>
+		<div class="controls">
+			<input id="delay_off-input" type="number" min="1" max="60" class="input-small" data-bind="value: settings.plugins.octolight.delay_off">
+		</div>
 	</div>
 </form>
