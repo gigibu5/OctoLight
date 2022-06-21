@@ -102,6 +102,7 @@ class OctoLightPlugin(
 
 	def on_api_get(self, request):
 		action = request.args.get('action', default="toggle", type=str)
+		delay = request.args.get('delay', default=self._settings.get(["delay_off"]), type=int)
 
 		if action == "toggle":
 			self.light_toggle()
@@ -123,10 +124,12 @@ class OctoLightPlugin(
 
 			return flask.jsonify(state=self.light_state)
 
+		#Turn on light and setup timer
 		elif action == "delayOff":
-			self.delayed_off_setup()
+			self.delayed_off_setup(delay)
 			return flask.jsonify(state=self.light_state)
 
+		#Turn off off timer and light
 		elif action == "delayOffStop":
 			self.delayed_off()
 			return flask.jsonify(state=self.light_state)
@@ -173,13 +176,19 @@ class OctoLightPlugin(
 		return
 
 	#Setup the light to turn on then off after a set time
-	def delayed_off_setup(self):
+	def delayed_off_setup(self, mins):
+		#Make sure a value was sent
+		if math.isnan(int(mins)):
+			self._logger.info("Error: Received value that is not an int: {}".format(
+				mins
+			))
+			return
+
 		if not self.light_state:
 			self.light_toggle()
 					#self._logger.info("int(self._settings.get(["delay_off"])) * 60")
 
-		self.startTimer(self._settings.get(["delay_off"]))
-
+		self.startTimer(mins)
 		return
 
 	def on_event(self, event, payload):
@@ -187,7 +196,22 @@ class OctoLightPlugin(
 			self._plugin_manager.send_plugin_message(self._identifier, dict(isLightOn=self.light_state))
 			return
 		if event == Events.PRINT_STARTED:
-			self.delayed_off_setup()
+			self.delayed_off_setup(self._settings.get(["delay_off"]))
+			return
+		if event == Events.PRINT_DONE:
+			self.delayed_off_setup(self._settings.get(["delay_off"]))
+			return
+		if event == Events.PRINT_FAILED:
+			self.delayed_off_setup(self._settings.get(["delay_off"]))
+			return
+		if event == Events.PRINT_CANCELLED:
+			self.delayed_off_setup(self._settings.get(["delay_off"]))
+			return
+		if event == Events.PRINT_PAUSED:
+			self.delayed_off_setup(self._settings.get(["delay_off"]))
+			return
+		if event == Events.ERROR:
+			self.delayed_off_setup(self._settings.get(["delay_off"]))
 			return
 
 	def get_update_information(self):
