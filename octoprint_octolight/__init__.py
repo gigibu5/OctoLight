@@ -136,6 +136,7 @@ class OctoLightPlugin(
 			self.light_toggle()
 
 	def light_off(self):
+		self.stopTimer()
 		if self.light_state:
 			self.light_toggle()
 
@@ -215,6 +216,9 @@ class OctoLightPlugin(
 				mins
 			))
 			return
+		
+		#Stop any past timers
+		self.delayed_off()
 
 		self.light_on()
 		self.startTimer(mins)
