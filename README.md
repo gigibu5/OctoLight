@@ -49,4 +49,4 @@ _(if the action parameter not given, the action toggle will be used by default)_
 - [x] Update interface if Light is turned on or off
 
 Maybe in the distant future:
-- [ ] Turn off on finish print
+- [x] Turn off on finish print
