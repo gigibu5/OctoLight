@@ -3,7 +3,8 @@
 	<div class="control-group">
 		<label class="control-label">{{ _('Light PIN') }}</label>
 		<div class="controls">
-			<input id="light_pin-input" type="number" min="1" max="40" class="input-small" data-bind="value: settings.plugins.octolight.light_pin">
+			<input id="light_pin-input" type="number" min="1" max="40" class="input-small"
+				data-bind="value: settings.plugins.octolight.light_pin">
 		</div>
 
 		<div class="controls">
@@ -15,33 +16,24 @@
 
 		<label class="control-label">{{ _('Delay Light Off') }}</label>
 		<div class="controls">
-			<input id="delay_off-input" type="number" min="1" max="60" class="input-small" data-bind="value: settings.plugins.octolight.delay_off">
+			<input id="delay_off-input" type="number" min="1" max="60" class="input-small"
+				data-bind="value: settings.plugins.octolight.delay_off">
 		</div>
 
+		<br />
+		<h4>Events</h4>
 
-		<label class="control-label">{{ _('Printer State: Started') }}</label>
-		<div class="controls">
-			<input id="delay_off-input" type="number" min="1" max="60" class="input-small" data-bind="value: settings.plugins.octolight.delay_off">
-		</div>
-		<label class="control-label">{{ _('Printer State: Done') }}</label>
-		<div class="controls">
-			<input id="delay_off-input" type="number" min="1" max="60" class="input-small" data-bind="value: settings.plugins.octolight.delay_off">
-		</div>
-		<label class="control-label">{{ _('Printer State: Failed') }}</label>
-		<div class="controls">
-			<input id="delay_off-input" type="number" min="1" max="60" class="input-small" data-bind="value: settings.plugins.octolight.delay_off">
-		</div>
-		<label class="control-label">{{ _('Printer State: Cancelled') }}</label>
-		<div class="controls">
-			<input id="delay_off-input" type="number" min="1" max="60" class="input-small" data-bind="value: settings.plugins.octolight.delay_off">
-		</div>
-		<label class="control-label">{{ _('Printer State: Paused') }}</label>
-		<div class="controls">
-			<input id="delay_off-input" type="number" min="1" max="60" class="input-small" data-bind="value: settings.plugins.octolight.delay_off">
-		</div>
-		<label class="control-label">{{ _('Printer State: Error') }}</label>
-		<div class="controls">
-			<input id="delay_off-input" type="number" min="1" max="60" class="input-small" data-bind="value: settings.plugins.octolight.delay_off">
-		</div>
+		{% for events in plugin_octolight_monitored_events -%}
+			<label class="control-label" for='{{ events.settingName }}'>{{ events.label }}</label>
+			<div class="controls">
+				<select id='{{ events.settingName }}'
+					data-bind="selectedOptions: settings.plugins.octolight.{{ events.settingName }}">
+					{% for options in plugin_octolight_event_options -%}
+						<option value='{{ options.value }}'>{{ options.name }}</option>
+					{% endfor %}
+				</select>
+			</div>
+			<br />
+		{% endfor %}
 	</div>
 </form>
