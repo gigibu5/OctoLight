@@ -81,14 +81,6 @@ class OctoLightPlugin(
 	def on_after_startup(self):
 		self.light_state = False
 
-		#Load in all the user settings for events
-		self.printer_start = self._settings.get(["event_printer_start"])
-		self.printer_done = self._settings.get(["event_printer_done"])
-		self.printer_failed = self._settings.get(["event_printer_failed"])
-		self.printer_cancelled = self._settings.get(["event_printer_cancelled"])
-		self.printer_paused = self._settings.get(["event_printer_paused"])
-		self.printer_error = self._settings.get(["event_printer_error"])
-
 		self._logger.info("--------------------------------------------")
 		self._logger.info("OctoLight started, listening for GET request")
 		self._logger.info("Light pin: {}, inverted_input: {}, Delay Time: {}".format(
@@ -211,7 +203,7 @@ class OctoLightPlugin(
 
 	#Setup the light to shutoff when called
 	def delayed_off(self):
-		self.light_on()
+		self.light_off()
 		self.stopTimer()
 		return
 
@@ -224,9 +216,7 @@ class OctoLightPlugin(
 			))
 			return
 
-		if not self.light_state:
-			self.light_toggle()
-
+		self.light_on()
 		self.startTimer(mins)
 		return
 
@@ -235,22 +225,22 @@ class OctoLightPlugin(
 			self._plugin_manager.send_plugin_message(self._identifier, dict(isLightOn=self.light_state))
 			return
 		if event == Events.PRINT_STARTED:
-			self.trigger_event(self.printer_start)
+			self.trigger_event(self._settings.get(["event_printer_start"])[0])
 			return
 		if event == Events.PRINT_DONE:
-			self.trigger_event(self.printer_done)
+			self.trigger_event(self._settings.get(["event_printer_done"])[0])
 			return
 		if event == Events.PRINT_FAILED:
-			self.trigger_event(self.printer_failed)
+			self.trigger_event(self._settings.get(["event_printer_failed"])[0])
 			return
 		if event == Events.PRINT_CANCELLED:
-			self.trigger_event(self.printer_cancelled)
+			self.trigger_event(self._settings.get(["event_printer_cancelled"])[0])
 			return
 		if event == Events.PRINT_PAUSED:
-			self.trigger_event(self.printer_paused)
+			self.trigger_event(self._settings.get(["event_printer_paused"])[0])
 			return
 		if event == Events.ERROR:
-			self.trigger_event(self.printer_error)
+			self.trigger_event(self._settings.get(["event_printer_error"])[0])
 			return
 
 	#Handles the event that should happen
@@ -261,7 +251,12 @@ class OctoLightPlugin(
 			self.light_off()
 		elif user_setting == "delay":
 			self.delayed_off_setup(self._settings.get(["delay_off"]))
+		else:
+			self._logger.info("Unknown event trigger, received: {}".format(
+				user_setting
+			))
 
+		return
 
 	def get_update_information(self):
 		return dict(
