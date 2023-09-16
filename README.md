@@ -49,4 +49,4 @@ _(if the action parameter not given, the action toggle will be used by default)_
 
 ## Thank you list
 Thank you goes out to the following people:
-- [@gigibu5] - Creater of Octolight
+- [@gigibu5]( https://github.com/gigibu5 ) - Creater of Octolight
