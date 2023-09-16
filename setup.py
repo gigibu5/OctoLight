@@ -21,7 +21,7 @@ plugin_version = "0.1.4.1"
 plugin_description = """A simple plugin, that add's a button to the navbar, toggleing GPIO on the RPi. It can be used for turning on and off a light."""
 
 # The plugin's author. Can be overwritten within OctoPrint's internal data via __plugin_author__ in the plugin module
-plugin_author = "Steven Thomson"
+plugin_author = "thomst08"
 
 # The plugin's author's mail address.
 plugin_author_email = "thomst08@hotmail.com"
