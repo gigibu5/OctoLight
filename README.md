@@ -7,7 +7,7 @@ A simple plugin that adds a button to the navigation bar for toggleing a GPIO pi
 Install via the bundled [Plugin Manager](https://docs.octoprint.org/en/master/bundledplugins/pluginmanager.html)
 or manually using this URL:
 
-	https://github.com/gigibu5/OctoLight/archive/master.zip
+	https://github.com/thomst08/OctoLight/archive/master.zip
 
 ## Configuration
 ![Settings panel](img/settings.png)
@@ -45,8 +45,8 @@ _(if the action parameter not given, the action toggle will be used by default)_
 - **delayOff**: Turn on light and setup timer to shutoff light after delay time, note, `&delay=VALUE` can be added to the URL to override the default time value
 - **delayOffStop**: Testing for shutting off timer and light
 
-## TO DO
-- [x] Update interface if Light is turned on or off
 
-Maybe in the distant future:
-- [x] Turn off on finish print
+
+## Thank you list
+Thank you goes out to the following people:
+- [@gigibu5] - Creater of Octolight
