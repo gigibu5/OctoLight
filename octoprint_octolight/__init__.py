@@ -138,9 +138,9 @@ class OctoLightPlugin(
 				type="github_release",
 				current=self._plugin_version,
 
-				user="gigibu5",
+				user="adrcunha",
 				repo="OctoLight",
-				pip="https://github.com/gigibu5/OctoLight/archive/{target}.zip"
+				pip="https://github.com/adrcunha/OctoLight/archive/{target}.zip"
 			)
 		)
 

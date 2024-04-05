@@ -7,7 +7,7 @@ A simple plugin that adds a button to the navigation bar for toggling a GPIO pin
 Install via the bundled [Plugin Manager](https://docs.octoprint.org/en/master/bundledplugins/pluginmanager.html)
 or manually using this URL:
 
-	https://github.com/gigibu5/OctoLight/archive/master.zip
+	https://github.com/adrcunha/OctoLight/archive/master.zip
 
 ## Configuration
 ![Settings panel](img/settings.png)
